@@ -1,0 +1,2 @@
+stack ghci
+pause
