@@ -1,0 +1,180 @@
+;;Damian Franco
+;;CS-357L(Section 002)
+;;Homework 1
+
+;;1.2
+(define big-number 10500900)
+(define small-number 0.00000025)
+(define cheshire 'cat)
+(define number1 big-number)
+(define number2 'big-number)
+;;a (Output = 10500900)
+big-number
+;;b (Output = 2.5e-007)
+small-number
+;;c (Output = 'big-number)
+'big-number
+;;d (Output = 'cat)
+cheshire
+;;e (Output = 'cheshire)
+'cheshire
+;;f (Output = 10500900)
+number1
+;;g (Output = 'big-number)
+number2
+;;h (Output = 'number1)
+'number1
+
+;;1.3
+;;a (output = 4)
+(- 10 (- 8 (- 6 4)))
+;;b (output = 2/5)
+(/ 40 (* 5 20))
+;;c (output = 2/3)
+(/ 2 3)
+;;d (output = 0.6666666666666667)
+(+ (* 0.1 20) (/ 4 -3))
+
+;;1.4
+;;a (Result = 10)
+(- (* 4 7) (+ 13 5))
+;;b (Result = 6)
+(* 3 (+ 4 (- -5 -3)))
+;;c (Result = 5.0)
+(/ 2.5 (* 5 (/ 1 10)))
+;;d (Result = 245073.0)
+(* 5(+ 255(* 537(+ 98.3(- 375(* 2.5 153))))))
+
+;;1.5
+;;a
+;;Given Scheme expression: (+ α (- (+ β γ) α)
+;;My Arithmetic Expression: (α + (α - (β + γ))
+;;b
+;;Given Scheme Expression: (+ (* α β) (* γ β))
+;;My Arithmetic Expression: (α * β) + (γ * β)
+;;c
+;;Given Scheme Expression: (/ (- α β) (- α γ))
+;;My Arithmetic Expression: (α - β) / (α - γ)
+
+;;1.6
+;;a (Output = (one two three four))
+(cons 'one (cons 'two (cons 'three (cons 'four '()))))
+;;b (Output = (one (two three four)))
+(cons 'one (cons '(two three four) '()))
+;;c (Output = (one (two three) four))
+(cons 'one (cons '(two three) '(four)))
+;;d (Output = ((one two) (three four)))
+(cons '(one two) (cons '(three four) '()))
+;;e (Output = (((one)))
+(cons (cons '(one) '())'())
+
+;;1.10
+;;a
+;;(symbol? (α β))
+;;Output: #f
+;;b
+;;(pair? (α β))
+;;Output: #t
+;;c
+;;(? (α β))
+;;Output: #f
+;;d
+;;(null? (cdr (cons α '())))
+;;Output: #t
+
+;;1.14
+;;a (Result: #t)
+(symbol? (car '(cat mouse)))
+;;b (Result: #f)
+(symbol? (cdr '((cat mouse))))
+;;c (Result: #f)
+(symbol? (cdr '(cat mouse)))
+;;d (Result: #t)
+(pair? (cons 'hound 'dog))
+;;e (Result: #f)
+(pair? (car '(cheshire cat)))
+;;f (Result: '())
+(pair? (cons '() '()))     
+
+;;2.1 (Output: Second item in list)
+(define second
+  (lambda(list)
+          (car (cdr list))))
+(second '(1 7 3 0 4))  
+
+;;2.3
+(define make-list-of-one
+  (lambda (item)
+    (cons item '())))
+
+(define make-list-of-two
+  (lambda (item1 item2)
+    (cons item1 (make-list-of-one item2))))
+  
+(define firsts-of-both
+  (lambda (list-1 list-2)
+    (make-list-of-two (car list-1) (car list-2))))
+
+;;a (Output: '(1 2))
+(firsts-of-both '(1 3 5 7) '(2 4 6))
+;;b (Output: '((a b) (e f)))
+(firsts-of-both '((a b) (c d)) '((e f) (g h)))
+
+;;2.4
+(define juggle
+  (lambda(sexpr)
+    (cons (car (cdr (cdr sexpr)))
+          (cons (car sexpr)
+                (cons (car (cdr sexpr)) '())))))
+(juggle '(jump quick spot)) ;;for testing
+(juggle '(dog bites man))   ;;for testing
+
+;;2.6
+(define a #t)
+(define b #t)
+(define c #t)
+(define e #f)
+(define f #f)
+;;a (Output: #t)
+(and a(or b e))
+;;b (Output: #t)
+(or e (and (not f) a c))
+;;c (Output: #t)
+(not (or (not a) (not b)))
+;;d (Output: #f)
+(and (or a f) (not (or b e)))  
+
+;;2.7
+(define expr #t)
+;;a (Output: #t)
+(or (symbol? expr) (not (symbol? expr)))
+;;b (Output: #f)
+(and (null? expr) (not (null? expr)))
+;;c (Output: #t)
+(not (and (or expr #f) (not expr)))
+;;d (Output: #f)                   
+(not (or expr #t))       
+
+;;2.10
+(define last-item
+  (lambda (ls)
+    (if (null? (cdr ls)) (car ls)
+      (last-item (cdr ls)))))
+
+(define member?
+  (lambda (item ls)
+    (if (null? ls) #f
+      (or (equal? (car ls) item)
+                (member? item (cdr ls))))))
+
+(define remove-1st
+  (lambda (item ls)
+    (if (null? ls) '()
+      (if (equal? (car ls) item) (cdr ls)
+          (cons (car ls) (remove-1st item (cdr ls)))))))
+
+;;Testing
+(define x '(1 2 3 4 10))
+(last-item x)
+(member? 5 x)
+(remove-1st 2 x)                                                                                                                                                                                                                                                                          

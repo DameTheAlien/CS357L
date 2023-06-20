@@ -1,0 +1,4 @@
+(define compose3
+  (lambda (f g h)
+    )
+  )

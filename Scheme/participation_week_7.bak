@@ -1,0 +1,65 @@
+;; Example 1
+(define fact
+	(lambda (x)
+		(letrec
+			(
+				(loop
+					(lambda (x acc)
+						(if (= x 0)
+							acc
+							(loop (sub1 x) (* x acc))
+						)
+					)
+				)
+			)
+			(loop x 1)
+)))
+
+;; Example 2
+(define reverse
+	(lambda (x)
+		(letrec
+			(
+				(loop
+					(lambda (x acc)
+						(if (null? x)
+							acc
+							(loop (cdr x) (cons (car x) acc))
+						)
+					)
+				)
+			)
+			(loop x '())
+)))
+
+;; Example 3
+(define iota
+	(lambda (x)
+		(letrec
+			(
+				(loop
+					(lambda (x acc)
+						(if (= x 0)
+							acc
+							(loop (sub1 x) (cons x acc))
+						)
+					)
+				)
+			)
+			(loop x '())
+)))
+
+(define tail-recur
+    (lambda (bpred xproc aproc acc0)
+        '()
+    )
+)
+
+(define length-tr
+	'()
+)
+
+(define foldr-tr
+	'()
+)
+

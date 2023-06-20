@@ -1,0 +1,36 @@
+;;(and (equal? (car ls) (cdr ls)) #T (null? ls) #f 'dog);;only evaluates true if all are true
+
+;;(and 't 'jgh 'mei)
+;;(and #t #f #f)
+
+
+;;(cdr (cons (list 1 2 3) 4)
+     
+;;(car (cdr (list 'cat 'dog)))
+
+;;(or #f #f #t #f 'yes)
+
+;;(null? (cdr (list 1)))
+
+;;(equal? (cons 1 2) (cons 1 2))
+
+;;((lambda (x y) x) 8 2)
+
+;;(append '(1) '(2 3))
+
+;;(list? (cons 1 '(2)))
+
+;;(if #f 'dog 'mouse)
+
+;;(append '(1 (2 3)) '(4 (5 6)))
+
+;;(equal? '(1 (2 3)) '(1 (2 3)))
+
+;;(list? (cons (list 1 2 3) 4))
+;;(cons (list 1 2 3) 4)
+
+;;((lambda (x) 7) 8)
+
+(cons 'a '(b))
+(cons '(a) '(b))
+(cons '(a) 'b)

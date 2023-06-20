@@ -1,0 +1,554 @@
+;;7.2
+(define compose3
+  (lambda (f g h)
+    (lambda (x)
+      (f (g (h x)))
+      )
+    )
+  )
+((compose3 add1 add1 add1) 1)
+
+
+;;7.3
+(define compose
+  (lambda (f g)
+    (lambda (x)
+      (f (g x))
+      )
+    )
+  )
+
+(define compose-many
+ (lambda args
+   (lambda (x)
+     (cond
+       ((null? args) x)
+       (else
+        ((compose (car args) (apply compose-many (cdr args))) x))
+       )
+     )
+   )
+ )
+
+((compose-many add1 add1 add1 add1) 3) ;;7
+((compose-many sqrt abs sub1 (lambda (n) (* n n))) 0.6) ;;0.8
+(let ((f (lambda (n) (if (even? n) (/ n 2) (add1 n))))) ;;4
+  ((compose-many f f f f f f) 21)) 
+
+
+;;7.6
+(define map-first-two
+  (lambda (proc ls)
+    (cond
+      ((null? (cdr ls)) '())
+      (else (cons (proc (car ls) (car (cdr ls))) (map-first-two proc (cdr ls))))
+     )
+   )
+ )
+
+(map-first-two + '(2 3 4 5 7)) ;;(5 7 9 12)
+(map-first-two max '(2 4 3 5 4 1)) ;;(4 4 5 5 4)
+
+a
+
+;;7.7
+(define reduce
+  (lambda (proc ls)
+    (cond
+      ((null? (cdr ls)) (car ls))
+      (else (reduce proc (cons (proc (car ls) (car (cdr ls))) (cddr ls))))
+     )
+   )
+ )
+
+(reduce + '(1 3 5 7 9)) ;;25
+(reduce max '(2 -4 6 8 3 1)) ;;8
+(reduce (lambda (x y) (and x y)) '(#t #t #t #t)) ;;#t
+
+
+;;7.8
+(define compose ;;JUST FOR TESTING
+  (lambda (f g)
+    (lambda (x)
+      (f (g x)))))
+
+(define andmap
+  (lambda (pred ls)
+    (cond
+      ((null? ls) #t)
+      ((pred (car ls)) (andmap pred (cdr ls)))
+      (else #f)
+     )
+    )
+  )
+
+(andmap positive? '(3 4 6 9)) ;;#t
+(andmap positive? '(3 -1 4 8)) ;;#f
+(let ((not-null? (compose not null?)))
+  (andmap not-null? '((a b) (c) (c d e)))) ;;#t
+
+
+;;7.12
+(define curried*
+  (lambda (m)
+    (lambda (n)
+      (* m n)
+      )
+    )
+  )
+(define times10
+  (lambda (x)
+    ((curried* x) 10)
+    )
+  )
+
+((curried* 25) 5) ;;125
+(times10 125) ;;1250
+
+
+;;7.18
+(define between?
+  (lambda (x y z)
+    (if
+     (< x y)
+     (if (< y z)
+         #t
+         #f)
+     #f
+     )
+    )
+  )
+(between? 5 6 7) ;;#t
+(between? 5 5 7) ;;#f
+(between? 5 4 7) ;;#f
+
+(define between?-c
+  (lambda (x)
+    (lambda (y)
+      (lambda (z)
+        (if
+         (< x y)
+         (if
+          (< y z)
+          #t
+          #f)
+         #f
+         )
+        )
+      )
+    )
+  )
+
+(((between?-c 5) 6) 7) ;;#t
+(((between?-c 5) 5) 7) ;;#f
+(((between?-c 5) 4) 7) ;;#f
+
+
+;;7.22
+(define flat-recur
+  (lambda (seed list-proc)
+    (letrec
+      ((helper
+	(lambda (ls)
+	  (if (null? ls)
+	      seed
+	      (list-proc (car ls) 
+			 (helper (cdr ls))))
+          )
+        )
+       )
+      helper
+      )
+    )
+  )
+
+(define mult-by-scalar
+  (lambda (c)
+    (flat-recur
+     '()
+     (lambda (x y)
+       (cons (* c x) y)
+     )
+    )
+  )
+)
+
+((mult-by-scalar 3) '(1 -2 3 -4)) ;; (3 -6 9 -12)
+((mult-by-scalar 5) '()) ;;()
+
+
+;;7.30
+(define deep-recur
+  (lambda (seed item-proc list-proc)
+    (letrec
+        ((helper
+          (lambda (ls)
+                   (if (null? ls)
+                       seed
+                       (let ((a (car ls)))
+                         (if (or (pair? a) (null? a))
+                             (list-proc (helper a) (helper (cdr ls)))
+                             (item-proc a (helper (cdr ls)))
+                             )
+                         )
+                       )
+            )
+          )
+         )
+      helper
+      )
+    )
+  )
+
+(define reverse-all
+  (deep-recur
+   '()
+   (lambda (x y)
+     (append y (cons x '()))
+    )
+   (lambda (x y)
+     (append y (cons x '()))
+     )
+  )
+)
+
+(reverse-all '(a (b c) (d (e f))))
+
+
+;;7.31
+(define deep-recur
+  (lambda (seed item-proc list-proc)
+    (letrec
+        ((helper
+          (lambda (ls)
+            (if (null? ls)
+                seed
+                (let ((a (car ls)))
+                  (if (or (pair? a) (null? a))
+                      (list-proc (helper a) (helper (cdr ls)))
+                      (item-proc a (helper (cdr ls)))
+                      )
+                  )
+                )
+            )
+          )
+         )
+      helper
+      )
+    )
+  )
+
+(define flat-recur
+  (lambda (seed list-proc)
+    (deep-recur
+     seed
+     list-proc
+     list-proc 
+    )
+  )
+)
+
+(define mult-by-scalar ;;TESTING
+  (lambda (c)
+    (flat-recur
+     '()
+     (lambda (x y)
+       (cons (* c x) y)
+     )
+    )
+  )
+)
+
+((mult-by-scalar 3) '(1 -2 3 -4)) ;; (3 -6 9 -12)
+((mult-by-scalar 5) '()) ;;()
+
+
+;;1
+;;a
+(define tail-recur
+  (lambda (bpred xproc aproc acc0)
+    (letrec
+        ((outer
+          (lambda (n)
+            (letrec
+                ((loop
+                  (lambda (x acc)
+                    (if (list? x)
+                        (if
+                         (bpred x)
+                         acc
+                         (loop (xproc x) (aproc (car x) acc))
+                         )
+                        (if
+                         (bpred x)
+                         acc
+                         (loop (xproc x) (aproc x acc))
+                         )
+                      )
+                    )
+                  ))
+              (loop n acc0)
+              )
+            )
+          ))
+      outer
+    )
+  )
+)
+
+;;b
+;;bpred = null?, xproc = cdr, aproc = cons, acc0 = '()
+(define reverse-t
+  (tail-recur null? cdr cons '()) 
+  )
+(reverse-t '(1 2 3 4 5))
+
+
+;;c
+;;bpred = zero?, xproc = sub1, aproc = cons, acc0 = '()
+(define iota
+  (tail-recur zero? (lambda (x) (- x 1)) cons '())
+  )
+(iota 5)
+
+;;test
+(define fact
+  (tail-recur zero? (lambda (x) (- x 1)) * 1)
+  )
+(fact 10) ;;3628800
+
+
+;;2
+(define disjunction2
+  (lambda (pred1 pred2)
+    (lambda (arg)
+      (cond
+        ((and (pred1 arg) (pred2 arg))
+         (if (or (procedure? arg) (symbol? arg))
+             #t
+             arg
+         )
+        )
+        ((pred1 arg)
+         (if (or (procedure? arg) (symbol? arg))
+             #t
+             arg
+         )
+         )
+        ((pred2 arg)
+         (if (or (procedure? arg) (symbol? arg))
+             #t
+             arg
+         )
+         )
+        (else #f)
+        )
+    )
+  )
+)
+
+((disjunction2 symbol? procedure?) +) ;;#t
+((disjunction2 symbol? procedure?) (quote +)) ;;#t
+(filter (disjunction2 even? (lambda (x) (< x 4))) (iota 8)) ;;(1 2 3 4 6 8)
+
+
+;;3
+(define disjunction
+  (lambda preds
+    (lambda (arg)
+      (cond
+        (((car preds) arg) 
+         (if (or (procedure? arg) (symbol? arg))
+             #t
+             (apply disjunction (cdr preds))
+         )
+        )
+        (else (apply disjunction (cdr preds))))
+        )
+    )
+  )
+
+((disjunction symbol? procedure?) +) ;;#t
+((disjunction symbol? procedure? list?) (quote +)) ;;#t
+(filter (disjunction even? (lambda (x) (< x 4))) (iota 8)) ;;(1 2 3 4 6 8)
+
+;;4
+(define matrix-map
+  (lambda (f A)
+    (cons (map f (car A)) (cons (map f (cadr A)) '()))
+    )
+  )
+
+(matrix-map (lambda (x) (* x x)) '((1 2) (3 4))) ;;((1 4) (9 16))
+
+
+;;5
+;;a
+(define fold
+  (lambda (seed proc)
+    (letrec
+        ((pattern
+          (lambda (ls)
+            (if (null? ls)
+                seed
+                (proc (car ls) (pattern (cdr ls)))
+                )))) 
+      pattern)))
+
+
+(define member?
+  (lambda (item ls)
+    (cond
+      ((null? ls) #f)
+      (else (or (equal? (car ls) item)
+                (member? item (cdr ls)))))))
+
+(define delete-duplicates
+  (fold
+   '()
+   (lambda (x y)
+     (if (member? x y)
+         y
+         (cons x y)
+     )
+    )
+  )
+ )
+(delete-duplicates '(a b a b a b a b)) ;;(a b)
+(delete-duplicates '(1 2 3 4)) ;;(1 2 3 4)
+
+;;b
+(define assoc-a
+  (lambda (item ls)
+    ((fold
+     #f
+     (lambda (x y)
+       (cond
+         ((equal? (car x) item) x)
+         (else y)
+        )
+       )
+     )
+     ls
+     )
+  )
+)
+(assoc-a 'b '((a 1) (b 2))) ;;(b 2)
+(assoc-a 'c '((a 1) (b 2))) ;;#f
+(assoc-a 'c '((c 1) (b 2))) ;;(c 1)
+
+
+;;PART III
+;;1
+(define length-m
+  (lambda (ls)
+    (apply +
+           (map
+            (lambda (x) (if (null? x) 0 1))
+            ls)
+     )
+   )
+ )
+(length-m '(1 2 3 4 5))
+(length-m '(a b c e d f g))
+
+
+;;2
+(define sum-of-squares
+  (lambda (ls)
+    (apply + (map (lambda (x) (* x x)) ls))
+   )
+ )
+(sum-of-squares '(1 2 3 4 5))
+(sum-of-squares '(2 2))
+
+
+;;3
+(define avg
+  (lambda (ls)
+    (/ (apply + ls)
+       (apply +
+           (map (lambda (x) (if (null? x) 0 1)) ls)
+        )
+     )
+   )
+ )
+(avg '(1 2 3 4 5 6))
+
+
+;;4
+(define avg-odd
+  (lambda (ls)
+    (letrec
+        ((help-plz
+          (lambda (newLs)
+            (/ (apply + newLs)
+               (length-m newLs)
+              )
+            )
+          ))
+      
+      (help-plz ((select odd?) (iota (length-m ls)) ls))
+        )
+    )
+  )
+(avg-odd '(1 2 3 4 5 6))
+
+
+;;5
+(define shortest
+  (lambda (ls0 ls1)
+    (cond
+      ((< (length-m ls0) (length-m ls1)) ls0)
+      ((> (length-m ls0) (length-m ls1)) ls1)
+      (else ("BOTH ARE EQUAL"))
+     )
+    )
+  )
+(shortest '(1 2 3 4 5 6) '(1 2 3))
+
+
+;;6
+(define avg-fact
+  (lambda (ls)
+    (letrec
+        ((help-plz
+          (lambda (fact-ls)
+            (/ (apply + fact-ls)
+               (length-m fact-ls)
+               )
+            )
+          ))
+      (help-plz (map (lambda (x) (apply * (iota x))) ls))
+      )
+   )
+ )
+(avg-fact '(1 2 3 4 5 6))
+
+
+;;7
+(define tally
+  (lambda (pred)
+    (lambda (ls)
+      (apply +
+           (map
+            (lambda (x) (if (pred x) 1 0))
+            ls)
+         )
+      )
+   )
+ )
+((tally odd?) '(1 2 3 4 5 6 7))
+((tally even?) '(1 2 3 4 5 6 7))
+
+
+;;8
+(define list-ref-d
+  (lambda (n ls)
+    ((select (lambda (x) (if (= n (- x 1)) #t #f)))
+     (iota (length-m ls))
+     ls
+     )
+   )
+ )
+(list-ref-d 1 '(9 4 6 7 5))

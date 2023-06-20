@@ -1,0 +1,111 @@
+
+;; Fill in your name and net ID below
+;;  replacing Last with your last name(s)
+;;  replacing First with your first name(s)
+;;  and replacing netID@unm.edu with your unm email address
+(define name '("Last" "First"))
+(define netID "netID@unm.edu")
+
+;; If you accept the academic honesty pledge, replace the "" below with
+;;      "I accept and agree to the academic honesty pledge"
+(define academic-honesty-pledge
+    "")
+
+
+;; Fill out the following defintions in wichever order you choose
+;;  your final submission should evaluate without errors.
+;; Each defintion comes pre-filled as '(), delete the '() prior to
+;;  defining your function. Do not replace it with another define:
+;;  i.e. The following defintion is WRONG:
+;;      (define func
+;;          (define func
+;;              (lambda ...
+;;
+;; Do NOT submit your answer as a quoted list, i.e. the following 
+;;  definition is also WRONG, as the quote was not removed:
+;;      (define func
+;;          '(lambda ...
+
+
+;; ======= Variadic Functions =======
+
+;; Using the instructions provided on LEARN, give a defintion for number
+(define number
+    '()
+)
+
+
+;; ============ Currying ============
+
+;; Using the instructions provided on LEARN, give a defintion for sum-of-squares-c
+(define sum-of-squares-c
+    '()
+)
+
+;; Using the instructions provided on LEARN, give a defintion for curry4
+(define curry4
+    '()
+)
+
+
+;; ============== Fold ==============
+
+;; You may use the definition of fold provided
+(define fold
+	(lambda (proc seed)
+		(letrec
+			(
+				(pattern
+					(lambda (ls)
+						(if (null? ls)
+							seed
+							(proc (car ls) (pattern (cdr ls)))
+						)
+					)
+				)
+			)
+			pattern)))
+
+;; Using the instructions provided on LEARN, give a defintion for snoc
+(define snoc
+    '()
+)
+
+;; Using the instructions provided on LEARN, give a defintion for take-while
+(define take-while
+    '()
+)
+
+
+;; ===== Procedural Abstraction =====
+
+;; Using the instructions provided on LEARN, give a defintion for fold-tree
+(define fold-tree
+	'()
+)
+
+;; Using the instructions provided on LEARN, give a defintion for depth
+(define depth
+    '()
+)
+
+
+;; Using the instructions provided on LEARN, give a defintion for count
+(define count
+    '()
+)
+
+
+;; ========== Flatten Tree ==========
+
+;; Using the instructions provided on LEARN, give a defintion for flatten-tree
+(define flatten-tree
+    '()
+)
+
+
+;; Using the instructions provided on LEARN, give a defintion for map-tree
+(define map-tree
+    '()
+)
+

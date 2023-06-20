@@ -1,0 +1,13 @@
+;;#2
+(define calculator
+  (lambda (ls)
+    (cond
+      ((null? ls) 0)
+      ((equal? (car ls) +) (+ 1 (calculator (cdr ls))))
+      (else (calculator (cdr ls)))
+      )
+    )
+  )
+
+;;(calculator 42)
+(calculator '(1 + 2))
